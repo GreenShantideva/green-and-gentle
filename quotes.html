@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quotes | Green and Gentle</title>
+  <meta name="description" content="A Green and Gentle quote generator with Schopenhauer-inspired reflection and tragedy resources." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Green and Gentle home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Green and Gentle</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="ideas.html">Ideas</a>
+      <a class="active" href="quotes.html">Quotes</a>
+      <a href="recipes.html">Vegan Recipes</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="page-intro">
+        <div>
+          <p class="eyebrow">Quote generator</p>
+          <h1>A gentle refusal of needless harm.</h1>
+        </div>
+        <div>
+          <p>Generate a Schopenhauer quote paired with a compassionate anti-natalist reflection and a Wikipedia reminder of human tragedy.</p>
+          <div class="field">
+            <label for="languageSelect">Language</label>
+            <select id="languageSelect">
+              <option value="en">English</option>
+              <option value="de">Deutsch</option>
+              <option value="nl">Nederlands</option>
+              <option value="fr">Fran&ccedil;ais</option>
+              <option value="es">Espa&ntilde;ol</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-strip">
+        <div class="photo-tile" role="img" aria-label="Hand-drawn Green and Gentle animals" style="background-image:url('assets/gentle-animals-wide.jpg');background-size:contain;background-color:#fffef9;background-repeat:no-repeat;"></div>
+        <div class="photo-tile" role="img" aria-label="Polar bear in a cold enclosure" style="background-image:url('assets/polar-bear.jpg')"></div>
+        <div class="photo-tile" role="img" aria-label="Snowy shrine path" style="background-image:url('assets/snow-shrine.jpg')"></div>
+      </div>
+
+      <div class="generator-grid">
+        <aside class="resource-panel" aria-label="Wikipedia resource panel">
+          <div class="resource-header">
+            <p class="resource-title">Reminder of human tragedy</p>
+            <a id="resourceLink" class="resource-link" href="https://en.wikipedia.org/wiki/Nanjing_Massacre" target="_blank" rel="noopener noreferrer">Read on Wikipedia: Nanjing Massacre</a>
+          </div>
+          <iframe id="resourceFrame" class="resource-frame" src="https://en.wikipedia.org/wiki/Nanjing_Massacre" title="Wikipedia article preview"></iframe>
+          <div class="resource-note">If the embedded preview ever fails on a future host, the article link above still opens the page directly.</div>
+        </aside>
+
+        <article class="quote-panel">
+          <div class="quote-content">
+            <p class="quote-source">Arthur Schopenhauer</p>
+            <p id="quote" class="quote-text"></p>
+            <p id="promoText" class="promo-text"></p>
+            <p id="originalText" class="original-text"></p>
+          </div>
+          <div class="quote-actions">
+            <button id="newQuoteButton" type="button">Regenerate quote</button>
+            <button id="newResourceButton" class="secondary" type="button">New tragic page</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <span>Green and Gentle</span>
+    <span><a href="mailto:greenandgentle@protonmail.com">greenandgentle@protonmail.com</a> &middot; <a href="https://instagram.com/greenandgentle" target="_blank" rel="noopener noreferrer">@greenandgentle</a></span>
+  </footer>
+
+  <script>
+    const quotes = [
+      { de: "Talent trifft ein Ziel, das niemand sonst treffen kann; Genie trifft ein Ziel, das niemand sonst sehen kann.", en: "Talent hits a target no one else can hit; genius hits a target no one else can see.", fr: "Le talent atteint une cible que personne d'autre ne peut atteindre ; le genie atteint une cible que personne d'autre ne peut voir.", es: "El talento alcanza un objetivo que nadie mas puede alcanzar; el genio alcanza un objetivo que nadie mas puede ver.", nl: "Talent raakt een doel dat niemand anders kan raken; genialiteit raakt een doel dat niemand anders kan zien." },
+      { de: "Ein Mensch kann tun, was er will, aber nicht wollen, was er will.", en: "A man can do what he wants, but not want what he wants.", fr: "Un homme peut faire ce qu'il veut, mais pas vouloir ce qu'il veut.", es: "Un hombre puede hacer lo que quiere, pero no querer lo que quiere.", nl: "Een mens kan doen wat hij wil, maar niet willen wat hij wil." },
+      { de: "Mitgefuehl ist die Grundlage der Moral.", en: "Compassion is the basis of morality.", fr: "La compassion est la base de la moralite.", es: "La compasion es la base de la moralidad.", nl: "Mededogen is de basis van moraliteit." },
+      { de: "Es ist schwer, Glueck in sich selbst zu finden, aber unmoeglich, es anderswo zu finden.", en: "It is difficult to find happiness within oneself, but it is impossible to find it anywhere else.", fr: "Il est difficile de trouver le bonheur en soi, mais il est impossible de le trouver ailleurs.", es: "Es dificil encontrar la felicidad dentro de uno mismo, pero es imposible encontrarla en otro lugar.", nl: "Het is moeilijk geluk in jezelf te vinden, maar onmogelijk het ergens anders te vinden." },
+      { de: "Jeder Mensch haelt die Grenzen seines eigenen Gesichtsfeldes fuer die Grenzen der Welt.", en: "Every man takes the limits of his own field of vision for the limits of the world.", fr: "Chaque homme prend les limites de son propre champ de vision pour les limites du monde.", es: "Cada hombre toma los limites de su propio campo de vision por los limites del mundo.", nl: "Iedereen neemt de grenzen van zijn eigen gezichtsveld voor de grenzen van de wereld." }
+    ];
+
+    const quotePromoMessages = [
+      { en: "Talent and genius still live in a world of suffering; Schopenhauer would say this insight makes avoiding future births an act of mercy.", de: "Talent und Genie leben dennoch in einer Welt des Leidens; Schopenhauer wuerde sagen, dass diese Einsicht das Vermeiden zukuenftiger Geburten zu einem Akt der Barmherzigkeit macht.", fr: "Le talent et le genie vivent toujours dans un monde de souffrance ; Schopenhauer dirait que cette lucidite fait de l'evitement des naissances futures un acte de misericorde.", es: "El talento y el genio siguen viviendo en un mundo de sufrimiento; Schopenhauer diria que esta claridad convierte evitar nacimientos futuros en un acto de misericordia.", nl: "Talent en genialiteit leven nog steeds in een wereld van lijden; Schopenhauer zou zeggen dat dit inzicht het vermijden van toekomstige geboorten tot een daad van mededogen maakt." },
+      { en: "The will is not free and desire causes endless suffering; Schopenhauer would urge that the kindest choice is to prevent more wills from arising.", de: "Der Wille ist nicht frei und Verlangen verursacht endloses Leiden; Schopenhauer wuerde sagen, die freundlichste Wahl sei, mehr Wille gar nicht erst entstehen zu lassen.", fr: "La volonte n'est pas libre et le desir engendre une souffrance sans fin ; Schopenhauer dirait que le plus doux choix est d'empecher plus de volontes d'emerger.", es: "La voluntad no es libre y el deseo causa sufrimiento infinito; Schopenhauer diria que la eleccion mas amable es impedir que surjan mas voluntades.", nl: "De wil is niet vrij en verlangen veroorzaakt eindeloos lijden; Schopenhauer zou zeggen dat de vriendelijkste keuze is om te voorkomen dat er meer willen ontstaan." },
+      { en: "Compassion is morality; Schopenhauer would argue the most moral choice is to prevent new lives from falling into inevitable suffering.", de: "Mitgefuehl ist Moral; Schopenhauer wuerde argumentieren, die moralischste Wahl sei, neue Leben davor zu bewahren, in unvermeidliches Leiden zu stuerzen.", fr: "La compassion est la morale ; Schopenhauer dirait que le choix le plus moral est d'empecher de nouvelles vies de tomber dans une souffrance inevitable.", es: "La compasion es la moral; Schopenhauer diria que la eleccion mas moral es impedir que nuevas vidas caigan en sufrimiento inevitable.", nl: "Mededogen is moraliteit; Schopenhauer zou zeggen dat de meest morele keuze is om nieuwe levens te behoeden voor onvermijdelijk lijden." },
+      { en: "Seeking happiness elsewhere is impossible and painful; Schopenhauer would say the kinder act is to not create more lives that must chase an unreachable joy.", de: "Glueck anderswo zu suchen ist unmoeglich und schmerzhaft; Schopenhauer wuerde sagen, die freundlichere Tat sei, nicht mehr Leben zu schaffen, die einer unerreichbaren Freude nachjagen.", fr: "Chercher le bonheur ailleurs est impossible et douloureux ; Schopenhauer dirait que l'acte le plus bienveillant est de ne pas creer davantage de vies qui poursuivent une joie inatteignable.", es: "Buscar la felicidad en otra parte es imposible y doloroso; Schopenhauer diria que el acto mas amable es no crear mas vidas que persigan una alegria inalcanzable.", nl: "Geluk elders zoeken is onmogelijk en pijnlijk; Schopenhauer zou zeggen dat de vriendelijkste daad is om niet meer levens te creeren die een onbereikbare vreugde najagen." },
+      { en: "The limits of your world reveal common suffering; Schopenhauer would call preventing new lives an act of empathy toward all future beings trapped within those limits.", de: "Die Grenzen deiner Welt zeigen das gemeinsame Leiden; Schopenhauer wuerde das Verhindern neuer Leben als einen Akt der Empathie gegenueber allen zukuenftigen Wesen nennen.", fr: "Les limites de ton monde revelent la souffrance commune ; Schopenhauer appellerait l'empechement de nouvelles vies un acte d'empathie envers tous les etres futurs.", es: "Los limites de tu mundo revelan el sufrimiento comun; Schopenhauer llamaria al prevenir nuevas vidas un acto de empatia hacia todos los seres futuros.", nl: "De grenzen van je wereld onthullen gemeenschappelijk lijden; Schopenhauer zou het voorkomen van nieuwe levens een daad van empathie noemen tegenover alle toekomstige wezens." }
+    ];
+
+    const tragedyPages = [
+      { titles: { en: "Nanjing Massacre", de: "Massaker von Nanking", fr: "Massacre de Nankin", es: "Masacre de Nankin", nl: "Bloedbad van Nanking" }, urls: { en: "https://en.wikipedia.org/wiki/Nanjing_Massacre", de: "https://de.wikipedia.org/wiki/Nanking-Massaker", fr: "https://fr.wikipedia.org/wiki/Massacre_de_Nankin", es: "https://es.wikipedia.org/wiki/Masacre_de_Nank%C3%ADn", nl: "https://nl.wikipedia.org/wiki/Slachting_van_Nanking" } },
+      { titles: { en: "Holocaust", de: "Holocaust", fr: "Holocauste", es: "Holocausto", nl: "Holocaust" }, urls: { en: "https://en.wikipedia.org/wiki/The_Holocaust", de: "https://de.wikipedia.org/wiki/Holocaust", fr: "https://fr.wikipedia.org/wiki/Holocauste", es: "https://es.wikipedia.org/wiki/Holocausto", nl: "https://nl.wikipedia.org/wiki/Holocaust" } },
+      { titles: { en: "2010 Haiti earthquake", de: "Erdbeben in Haiti 2010", fr: "Seisme de 2010 en Haiti", es: "Terremoto de Haiti de 2010", nl: "Aardbeving Haiti 2010" }, urls: { en: "https://en.wikipedia.org/wiki/2010_Haiti_earthquake", de: "https://de.wikipedia.org/wiki/Erdbeben_in_Haiti_2010", fr: "https://fr.wikipedia.org/wiki/S%C3%A9isme_de_2010_en_Ha%C3%AFti", es: "https://es.wikipedia.org/wiki/Terremoto_de_Hait%C3%AD_de_2010", nl: "https://nl.wikipedia.org/wiki/Aardbeving_Ha%C3%AFti_2010" } }
+    ];
+
+    const quoteElement = document.getElementById("quote");
+    const promoText = document.getElementById("promoText");
+    const originalText = document.getElementById("originalText");
+    const button = document.getElementById("newQuoteButton");
+    const newResourceButton = document.getElementById("newResourceButton");
+    const languageSelect = document.getElementById("languageSelect");
+    const resourceLink = document.getElementById("resourceLink");
+    const resourceFrame = document.getElementById("resourceFrame");
+    let currentLanguage = languageSelect.value;
+    let currentQuoteIndex = 0;
+
+    function getRandomQuote() {
+      currentQuoteIndex = Math.floor(Math.random() * quotes.length);
+      return quotes[currentQuoteIndex];
+    }
+
+    function getRandomResource() {
+      return tragedyPages[Math.floor(Math.random() * tragedyPages.length)];
+    }
+
+    function localizeResourceLink(title) {
+      const labels = { en: "Read on Wikipedia", de: "Auf Wikipedia lesen", nl: "Lees op Wikipedia", fr: "Lire sur Wikipedia", es: "Leer en Wikipedia" };
+      return `${labels[currentLanguage] || labels.en}: ${title}`;
+    }
+
+    function showQuote() {
+      const quote = getRandomQuote();
+      const promo = quotePromoMessages[currentQuoteIndex] || quotePromoMessages[0];
+      quoteElement.textContent = quote[currentLanguage] || quote.en;
+      promoText.textContent = promo[currentLanguage] || promo.en;
+      originalText.textContent = `Original (Deutsch): ${quote.de}`;
+      showResource();
+    }
+
+    function showResource() {
+      const page = getRandomResource();
+      const title = page.titles[currentLanguage] || page.titles.en;
+      const url = page.urls[currentLanguage] || page.urls.en;
+      resourceLink.href = url;
+      resourceLink.textContent = localizeResourceLink(title);
+      resourceFrame.src = url;
+    }
+
+    button.addEventListener("click", showQuote);
+    newResourceButton.addEventListener("click", showResource);
+    languageSelect.addEventListener("change", event => {
+      currentLanguage = event.target.value;
+      showQuote();
+    });
+    showQuote();
+  </script>
+</body>
+</html>

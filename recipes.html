@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vegan Recipe Generator | Green and Gentle</title>
+  <meta name="description" content="Generate detailed vegan recipes with multilingual labels and estimated ingredient costs by region." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Green and Gentle home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Green and Gentle</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="ideas.html">Ideas</a>
+      <a href="quotes.html">Quotes</a>
+      <a class="active" href="recipes.html">Vegan Recipes</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="page-intro">
+        <div>
+          <p class="eyebrow">Vegan recipe generator</p>
+          <h1 id="recipePageTitle">Eat gently, spend clearly.</h1>
+        </div>
+        <div>
+          <p id="recipePageCopy">
+            Generate a detailed vegan meal with ingredients, steps, prep notes, nutrition style, and estimated ingredient cost for your selected region.
+          </p>
+          <p class="notice">
+            Price estimates are offline guide prices, not live supermarket prices. Use the location controls for a rough local currency estimate, then adjust for your store, season, and brand.
+          </p>
+        </div>
+      </div>
+
+      <div class="photo-strip">
+        <div class="photo-tile" role="img" aria-label="Hand-drawn animals" style="background-image:url('assets/gentle-animals-wide.jpg');background-size:contain;background-color:#fffef9;background-repeat:no-repeat;"></div>
+        <div class="photo-tile" role="img" aria-label="Small pony near a wooden fence" style="background-image:url('assets/pony.jpg')"></div>
+        <div class="photo-tile" role="img" aria-label="Alpacas at a farm" style="background-image:url('assets/alpacas.jpg')"></div>
+      </div>
+
+      <div class="control-panel" aria-label="Recipe generator controls">
+        <div class="field">
+          <label for="recipeLanguage">Language</label>
+          <select id="recipeLanguage">
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="nl">Nederlands</option>
+            <option value="fr">Fran&ccedil;ais</option>
+            <option value="es">Espa&ntilde;ol</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="regionSelect">Location</label>
+          <select id="regionSelect">
+            <option value="uk">United Kingdom</option>
+            <option value="us">United States</option>
+            <option value="eu">Europe</option>
+            <option value="au">Australia</option>
+            <option value="global">Global estimate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="styleSelect">Meal style</label>
+          <select id="styleSelect">
+            <option value="any">Any gentle meal</option>
+            <option value="quick">Quick</option>
+            <option value="cheap">Budget</option>
+            <option value="comfort">Comfort</option>
+            <option value="highProtein">Higher protein</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="servingsInput">Servings</label>
+          <input id="servingsInput" type="number" min="1" max="8" value="2" />
+        </div>
+      </div>
+
+      <div class="actions" style="max-width:1180px;margin-left:auto;margin-right:auto;">
+        <button id="generateRecipeButton" type="button">Generate recipe</button>
+        <button id="useLocationButton" class="secondary" type="button">Use my location</button>
+      </div>
+
+      <p id="locationNote" class="notice">Tip: if browser location is unavailable, choose your region manually above.</p>
+
+      <div class="recipe-layout">
+        <aside class="panel">
+          <span class="kicker" id="recipeMetaKicker">Recipe details</span>
+          <h2 id="recipeTitle">Loading recipe</h2>
+          <p id="recipeSummary"></p>
+          <div class="recipe-meta" aria-label="Recipe metadata">
+            <span class="meta-pill" id="recipeTime"></span>
+            <span class="meta-pill" id="recipeServings"></span>
+            <span class="meta-pill" id="recipeProtein"></span>
+            <span class="meta-pill" id="recipeMood"></span>
+          </div>
+          <p class="price-total" id="recipeCost"></p>
+        </aside>
+
+        <section class="panel" aria-labelledby="ingredientsTitle">
+          <h2 id="ingredientsTitle">Ingredients</h2>
+          <ul class="ingredients" id="ingredientsList"></ul>
+        </section>
+      </div>
+
+      <div class="recipe-layout">
+        <section class="panel" aria-labelledby="stepsTitle">
+          <h2 id="stepsTitle">Steps</h2>
+          <ol class="steps" id="stepsList"></ol>
+        </section>
+        <section class="panel" aria-labelledby="notesTitle">
+          <h2 id="notesTitle">Gentle notes</h2>
+          <p id="recipeNotes"></p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contact">
+    <span>Green and Gentle</span>
+    <span><a href="mailto:greenandgentle@protonmail.com">greenandgentle@protonmail.com</a> &middot; <a href="https://instagram.com/greenandgentle" target="_blank" rel="noopener noreferrer">@greenandgentle</a></span>
+  </footer>
+
+  <script>
+    const ui = {
+      en: {
+        title: "Eat gently, spend clearly.",
+        copy: "Generate a detailed vegan meal with ingredients, steps, prep notes, nutrition style, and estimated ingredient cost for your selected region.",
+        details: "Recipe details",
+        ingredients: "Ingredients",
+        steps: "Steps",
+        notes: "Gentle notes",
+        generate: "Generate recipe",
+        locate: "Use my location",
+        locationFound: "Region estimated from your browser location. You can still change it manually.",
+        locationFailed: "Location was not available. Choose your region manually.",
+        servings: "servings",
+        total: "Estimated total",
+        perServing: "per serving"
+      },
+      de: {
+        title: "Sanft essen, klar planen.",
+        copy: "Erzeuge ein veganes Gericht mit Zutaten, Schritten, Notizen und geschaetzten Kosten fuer deine Region.",
+        details: "Rezeptdetails",
+        ingredients: "Zutaten",
+        steps: "Schritte",
+        notes: "Sanfte Notizen",
+        generate: "Rezept erzeugen",
+        locate: "Standort nutzen",
+        locationFound: "Region grob aus deinem Browser-Standort geschaetzt.",
+        locationFailed: "Standort war nicht verfuegbar. Waehle deine Region manuell.",
+        servings: "Portionen",
+        total: "Geschaetzte Summe",
+        perServing: "pro Portion"
+      },
+      nl: {
+        title: "Zacht eten, duidelijk plannen.",
+        copy: "Maak een vegan maaltijd met ingredienten, stappen, notities en geschatte kosten voor jouw regio.",
+        details: "Receptdetails",
+        ingredients: "Ingredienten",
+        steps: "Stappen",
+        notes: "Zachte notities",
+        generate: "Genereer recept",
+        locate: "Gebruik locatie",
+        locationFound: "Regio geschat via je browserlocatie.",
+        locationFailed: "Locatie was niet beschikbaar. Kies je regio handmatig.",
+        servings: "porties",
+        total: "Geschat totaal",
+        perServing: "per portie"
+      },
+      fr: {
+        title: "Manger doucement, depenser clairement.",
+        copy: "Genere un repas vegetal avec ingredients, etapes, notes et cout estime pour ta region.",
+        details: "Details de la recette",
+        ingredients: "Ingredients",
+        steps: "Etapes",
+        notes: "Notes douces",
+        generate: "Generer une recette",
+        locate: "Utiliser ma position",
+        locationFound: "Region estimee depuis la position du navigateur.",
+        locationFailed: "Position non disponible. Choisis ta region manuellement.",
+        servings: "portions",
+        total: "Total estime",
+        perServing: "par portion"
+      },
+      es: {
+        title: "Comer con cuidado, gastar con claridad.",
+        copy: "Genera una comida vegana con ingredientes, pasos, notas y coste estimado para tu region.",
+        details: "Detalles de receta",
+        ingredients: "Ingredientes",
+        steps: "Pasos",
+        notes: "Notas suaves",
+        generate: "Generar receta",
+        locate: "Usar mi ubicacion",
+        locationFound: "Region estimada desde la ubicacion del navegador.",
+        locationFailed: "La ubicacion no esta disponible. Elige tu region manualmente.",
+        servings: "raciones",
+        total: "Total estimado",
+        perServing: "por racion"
+      }
+    };
+
+    const regions = {
+      uk: { currency: "GBP", symbol: "£", factor: 1, decimals: 2 },
+      us: { currency: "USD", symbol: "$", factor: 1.28, decimals: 2 },
+      eu: { currency: "EUR", symbol: "€", factor: 1.17, decimals: 2 },
+      au: { currency: "AUD", symbol: "A$", factor: 1.95, decimals: 2 },
+      global: { currency: "USD", symbol: "$", factor: 1.15, decimals: 2 }
+    };
+
+    const recipes = [
+      {
+        id: "lentil-bolognese",
+        tags: ["cheap", "comfort", "highProtein"],
+        time: "35 min",
+        protein: "High protein",
+        mood: "Comforting",
+        title: {
+          en: "Red Lentil Bolognese",
+          de: "Rote-Linsen-Bolognese",
+          nl: "Rode linzen bolognese",
+          fr: "Bolognaise de lentilles rouges",
+          es: "Bolognesa de lentejas rojas"
+        },
+        summary: {
+          en: "A rich tomato pasta sauce built from lentils, vegetables, herbs, and patience.",
+          de: "Eine kraeftige Tomatensauce mit Linsen, Gemuese, Kraeutern und etwas Geduld.",
+          nl: "Een rijke tomatensaus met linzen, groente, kruiden en geduld.",
+          fr: "Une sauce tomate riche avec lentilles, legumes, herbes et patience.",
+          es: "Una salsa de tomate intensa con lentejas, verduras, hierbas y paciencia."
+        },
+        ingredients: [
+          ["olive oil", 0.18, "1 tbsp"],
+          ["onion", 0.28, "1 medium"],
+          ["carrot", 0.18, "1 medium"],
+          ["garlic", 0.12, "2 cloves"],
+          ["red lentils", 0.52, "120 g"],
+          ["chopped tomatoes", 0.75, "1 tin"],
+          ["tomato paste", 0.20, "1 tbsp"],
+          ["dried pasta", 0.70, "180 g"],
+          ["dried oregano", 0.06, "1 tsp"]
+        ],
+        steps: [
+          "Dice the onion and carrot finely so they melt into the sauce.",
+          "Warm the oil in a pan, then cook onion and carrot for 6 minutes until soft.",
+          "Add garlic, tomato paste, oregano, lentils, chopped tomatoes, and 250 ml water.",
+          "Simmer for 20 minutes, stirring often, until the lentils collapse into a thick sauce.",
+          "Cook the pasta separately, reserve a little pasta water, then fold the sauce through.",
+          "Taste for salt and pepper. Loosen with pasta water if needed."
+        ],
+        notes: "This is cheap, filling, and easy to batch cook. Leftovers can become toast topping, jacket potato filling, or a lasagne layer."
+      },
+      {
+        id: "tofu-rice-bowl",
+        tags: ["quick", "highProtein"],
+        time: "25 min",
+        protein: "Higher protein",
+        mood: "Fresh",
+        title: {
+          en: "Crispy Tofu Rice Bowl",
+          de: "Knusprige Tofu-Reis-Bowl",
+          nl: "Knapperige tofu rijstkom",
+          fr: "Bol de riz au tofu croustillant",
+          es: "Bol de arroz con tofu crujiente"
+        },
+        summary: {
+          en: "Crisp tofu, warm rice, vegetables, and a bright soy-lime dressing.",
+          de: "Knuspriger Tofu, warmer Reis, Gemuese und ein helles Soja-Limetten-Dressing.",
+          nl: "Knapperige tofu, warme rijst, groente en een frisse soja-limoendressing.",
+          fr: "Tofu croustillant, riz chaud, legumes et sauce soja-citron vert.",
+          es: "Tofu crujiente, arroz caliente, verduras y salsa de soja con lima."
+        },
+        ingredients: [
+          ["firm tofu", 1.55, "200 g"],
+          ["rice", 0.42, "150 g"],
+          ["broccoli", 0.85, "180 g"],
+          ["carrot", 0.18, "1 medium"],
+          ["soy sauce", 0.18, "2 tbsp"],
+          ["lime or lemon", 0.35, "1"],
+          ["cornflour", 0.08, "1 tbsp"],
+          ["sesame or olive oil", 0.20, "1 tbsp"],
+          ["peanuts", 0.30, "20 g"]
+        ],
+        steps: [
+          "Press tofu briefly, then cut into cubes and coat with cornflour and a little soy sauce.",
+          "Cook rice according to the packet while you prepare the vegetables.",
+          "Pan-fry tofu in oil for 8 to 10 minutes, turning until golden on several sides.",
+          "Steam or stir-fry broccoli and carrot until bright and tender.",
+          "Mix soy sauce with lime juice and a splash of water for the dressing.",
+          "Serve rice, tofu, vegetables, dressing, and peanuts in bowls."
+        ],
+        notes: "For lower cost, use frozen broccoli or cabbage. For more protein, add edamame or an extra half block of tofu."
+      },
+      {
+        id: "chickpea-coconut-curry",
+        tags: ["comfort", "cheap"],
+        time: "30 min",
+        protein: "Balanced",
+        mood: "Warming",
+        title: {
+          en: "Chickpea Coconut Curry",
+          de: "Kichererbsen-Kokos-Curry",
+          nl: "Kikkererwten kokos curry",
+          fr: "Curry pois chiches coco",
+          es: "Curry de garbanzos y coco"
+        },
+        summary: {
+          en: "A gentle curry with chickpeas, spinach, coconut milk, and rice.",
+          de: "Ein sanftes Curry mit Kichererbsen, Spinat, Kokosmilch und Reis.",
+          nl: "Een zachte curry met kikkererwten, spinazie, kokosmelk en rijst.",
+          fr: "Un curry doux avec pois chiches, epinards, lait de coco et riz.",
+          es: "Un curry suave con garbanzos, espinacas, leche de coco y arroz."
+        },
+        ingredients: [
+          ["onion", 0.28, "1 medium"],
+          ["garlic", 0.12, "2 cloves"],
+          ["curry powder", 0.12, "2 tsp"],
+          ["chickpeas", 0.72, "1 tin"],
+          ["coconut milk", 0.95, "1 tin"],
+          ["spinach", 0.70, "2 handfuls"],
+          ["rice", 0.42, "150 g"],
+          ["tomato paste", 0.20, "1 tbsp"],
+          ["oil", 0.12, "1 tbsp"]
+        ],
+        steps: [
+          "Cook the rice first so it is ready when the curry finishes.",
+          "Soften onion in oil for 5 minutes, then add garlic, curry powder, and tomato paste.",
+          "Add chickpeas and coconut milk. Simmer for 12 to 15 minutes.",
+          "Stir through spinach until wilted. Add water if the curry is too thick.",
+          "Season with salt, pepper, and lemon juice if you have it.",
+          "Serve with rice and save leftovers for the next day."
+        ],
+        notes: "This recipe is forgiving. Frozen spinach, lentils, potatoes, or peas all work if you want to use what is already in the kitchen."
+      },
+      {
+        id: "bean-chilli",
+        tags: ["cheap", "comfort", "highProtein"],
+        time: "40 min",
+        protein: "High protein",
+        mood: "Hearty",
+        title: {
+          en: "Three Bean Chilli",
+          de: "Drei-Bohnen-Chili",
+          nl: "Driebonen chili",
+          fr: "Chili aux trois haricots",
+          es: "Chili de tres alubias"
+        },
+        summary: {
+          en: "Beans, tomato, smoky spice, and vegetables in a sturdy one-pot meal.",
+          de: "Bohnen, Tomate, rauchige Gewuerze und Gemuese in einem kraeftigen Topfgericht.",
+          nl: "Bonen, tomaat, rokerige kruiden en groente in een stevige eenpansmaaltijd.",
+          fr: "Haricots, tomate, epices fumees et legumes dans un plat complet.",
+          es: "Alubias, tomate, especias ahumadas y verduras en una comida completa."
+        },
+        ingredients: [
+          ["mixed beans", 1.10, "2 tins"],
+          ["chopped tomatoes", 0.75, "1 tin"],
+          ["onion", 0.28, "1 medium"],
+          ["pepper", 0.70, "1"],
+          ["sweetcorn", 0.45, "100 g"],
+          ["rice or bread", 0.45, "2 portions"],
+          ["smoked paprika", 0.10, "1 tsp"],
+          ["cumin", 0.08, "1 tsp"],
+          ["oil", 0.12, "1 tbsp"]
+        ],
+        steps: [
+          "Cook onion and pepper in oil until soft and sweet.",
+          "Add paprika and cumin, stirring for 30 seconds so the spices bloom.",
+          "Add tomatoes, drained beans, sweetcorn, and a splash of water.",
+          "Simmer for 20 minutes until thick. Mash a few beans to make it creamy.",
+          "Serve with rice, bread, potatoes, or a simple salad.",
+          "Cool leftovers quickly and keep them for wraps or lunch bowls."
+        ],
+        notes: "A good recipe for feeding several people cheaply. It also freezes well, which helps reduce waste."
+      }
+    ];
+
+    const ingredientNames = {
+      de: {
+        "olive oil": "Olivenoel", "onion": "Zwiebel", "carrot": "Karotte", "garlic": "Knoblauch", "red lentils": "rote Linsen", "chopped tomatoes": "gehackte Tomaten", "tomato paste": "Tomatenmark", "dried pasta": "trockene Pasta", "dried oregano": "getrockneter Oregano", "firm tofu": "fester Tofu", "rice": "Reis", "broccoli": "Brokkoli", "soy sauce": "Sojasauce", "lime or lemon": "Limette oder Zitrone", "cornflour": "Speisestaerke", "sesame or olive oil": "Sesam- oder Olivenoel", "peanuts": "Erdnuesse", "curry powder": "Currypulver", "chickpeas": "Kichererbsen", "coconut milk": "Kokosmilch", "spinach": "Spinat", "oil": "Oel", "mixed beans": "gemischte Bohnen", "pepper": "Paprika", "sweetcorn": "Mais", "rice or bread": "Reis oder Brot", "smoked paprika": "geraeuchertes Paprikapulver", "cumin": "Kreuzkuemmel"
+      },
+      nl: {
+        "olive oil": "olijfolie", "onion": "ui", "carrot": "wortel", "garlic": "knoflook", "red lentils": "rode linzen", "chopped tomatoes": "tomatenblokjes", "tomato paste": "tomatenpuree", "dried pasta": "droge pasta", "dried oregano": "gedroogde oregano", "firm tofu": "stevige tofu", "rice": "rijst", "broccoli": "broccoli", "soy sauce": "sojasaus", "lime or lemon": "limoen of citroen", "cornflour": "maizena", "sesame or olive oil": "sesam- of olijfolie", "peanuts": "pindas", "curry powder": "currypoeder", "chickpeas": "kikkererwten", "coconut milk": "kokosmelk", "spinach": "spinazie", "oil": "olie", "mixed beans": "gemengde bonen", "pepper": "paprika", "sweetcorn": "mais", "rice or bread": "rijst of brood", "smoked paprika": "gerookt paprikapoeder", "cumin": "komijn"
+      },
+      fr: {
+        "olive oil": "huile d'olive", "onion": "oignon", "carrot": "carotte", "garlic": "ail", "red lentils": "lentilles corail", "chopped tomatoes": "tomates concassees", "tomato paste": "concentre de tomate", "dried pasta": "pates seches", "dried oregano": "origan seche", "firm tofu": "tofu ferme", "rice": "riz", "broccoli": "brocoli", "soy sauce": "sauce soja", "lime or lemon": "citron vert ou citron", "cornflour": "fecule de mais", "sesame or olive oil": "huile de sesame ou olive", "peanuts": "cacahuetes", "curry powder": "poudre de curry", "chickpeas": "pois chiches", "coconut milk": "lait de coco", "spinach": "epinards", "oil": "huile", "mixed beans": "haricots melanges", "pepper": "poivron", "sweetcorn": "mais doux", "rice or bread": "riz ou pain", "smoked paprika": "paprika fume", "cumin": "cumin"
+      },
+      es: {
+        "olive oil": "aceite de oliva", "onion": "cebolla", "carrot": "zanahoria", "garlic": "ajo", "red lentils": "lentejas rojas", "chopped tomatoes": "tomate troceado", "tomato paste": "concentrado de tomate", "dried pasta": "pasta seca", "dried oregano": "oregano seco", "firm tofu": "tofu firme", "rice": "arroz", "broccoli": "brocoli", "soy sauce": "salsa de soja", "lime or lemon": "lima o limon", "cornflour": "maicena", "sesame or olive oil": "aceite de sesamo u oliva", "peanuts": "cacahuetes", "curry powder": "curry en polvo", "chickpeas": "garbanzos", "coconut milk": "leche de coco", "spinach": "espinacas", "oil": "aceite", "mixed beans": "alubias mixtas", "pepper": "pimiento", "sweetcorn": "maiz dulce", "rice or bread": "arroz o pan", "smoked paprika": "pimenton ahumado", "cumin": "comino"
+      }
+    };
+
+    const methodText = {
+      "lentil-bolognese": {
+        de: ["Zwiebel und Karotte sehr fein wuerfeln, damit sie in der Sauce weich werden.", "Oel erhitzen und Zwiebel mit Karotte etwa 6 Minuten sanft braten.", "Knoblauch, Tomatenmark, Oregano, Linsen, Tomaten und 250 ml Wasser zugeben.", "20 Minuten koecheln lassen und oft ruehren, bis die Linsen zerfallen.", "Pasta kochen, etwas Kochwasser aufheben und alles mit der Sauce mischen.", "Mit Salz und Pfeffer abschmecken und bei Bedarf mit Kochwasser lockern."],
+        nl: ["Snijd ui en wortel fijn zodat ze zacht worden in de saus.", "Verwarm olie en bak ui met wortel ongeveer 6 minuten.", "Voeg knoflook, tomatenpuree, oregano, linzen, tomaten en 250 ml water toe.", "Laat 20 minuten zacht koken en roer vaak tot de linzen uit elkaar vallen.", "Kook de pasta, bewaar wat kookwater en meng met de saus.", "Breng op smaak met zout en peper en maak losser met kookwater."],
+        fr: ["Coupe l'oignon et la carotte tres finement pour qu'ils fondent dans la sauce.", "Chauffe l'huile puis cuis oignon et carotte 6 minutes.", "Ajoute ail, concentre, origan, lentilles, tomates et 250 ml d'eau.", "Laisse mijoter 20 minutes en remuant souvent.", "Cuis les pates, garde un peu d'eau de cuisson puis melange avec la sauce.", "Assaisonne et detends avec un peu d'eau de cuisson si besoin."],
+        es: ["Pica fino la cebolla y la zanahoria para que se integren en la salsa.", "Calienta aceite y cocina cebolla y zanahoria unos 6 minutos.", "Anade ajo, concentrado, oregano, lentejas, tomate y 250 ml de agua.", "Cuece 20 minutos removiendo a menudo hasta que espese.", "Cuece la pasta, guarda un poco de agua y mezclala con la salsa.", "Ajusta sal y pimienta; afloja con agua de pasta si hace falta."]
+      },
+      "tofu-rice-bowl": {
+        de: ["Tofu kurz pressen, wuerfeln und mit Staerke und etwas Sojasauce mischen.", "Reis kochen, waehrend du das Gemuese vorbereitest.", "Tofu 8 bis 10 Minuten in Oel braten, bis mehrere Seiten goldbraun sind.", "Brokkoli und Karotte duensten oder braten, bis sie zart bleiben.", "Sojasauce mit Limettensaft und etwas Wasser verruehren.", "Reis, Tofu, Gemuese, Dressing und Erdnuesse in Schalen servieren."],
+        nl: ["Druk tofu kort uit, snijd in blokjes en meng met maizena en wat sojasaus.", "Kook de rijst terwijl je de groente voorbereidt.", "Bak tofu 8 tot 10 minuten in olie tot meerdere kanten goudbruin zijn.", "Stoom of roerbak broccoli en wortel beetgaar.", "Meng sojasaus met limoensap en een scheut water.", "Serveer rijst, tofu, groente, dressing en pindas in kommen."],
+        fr: ["Presse le tofu, coupe-le en cubes et enrobe avec fecule et un peu de sauce soja.", "Cuis le riz pendant que tu prepares les legumes.", "Fais dorer le tofu 8 a 10 minutes dans l'huile.", "Cuis brocoli et carotte jusqu'a ce qu'ils restent tendres.", "Melange sauce soja, jus de citron vert et un peu d'eau.", "Sers riz, tofu, legumes, sauce et cacahuetes dans des bols."],
+        es: ["Prensa el tofu, cortalo en dados y cubre con maicena y un poco de soja.", "Cuece el arroz mientras preparas las verduras.", "Dora el tofu 8 a 10 minutos en aceite.", "Cocina brocoli y zanahoria hasta que esten tiernos.", "Mezcla salsa de soja con lima y un poco de agua.", "Sirve arroz, tofu, verduras, salsa y cacahuetes en boles."]
+      },
+      "chickpea-coconut-curry": {
+        de: ["Reis zuerst kochen, damit er fertig ist, wenn das Curry bereit ist.", "Zwiebel 5 Minuten in Oel weich braten, dann Knoblauch, Curry und Tomatenmark zugeben.", "Kichererbsen und Kokosmilch einruehren und 12 bis 15 Minuten koecheln.", "Spinat unterheben, bis er zusammenfaellt; bei Bedarf Wasser zugeben.", "Mit Salz, Pfeffer und Zitronensaft abschmecken.", "Mit Reis servieren und Reste fuer den naechsten Tag aufheben."],
+        nl: ["Kook eerst de rijst zodat die klaar is als de curry klaar is.", "Bak ui 5 minuten in olie en voeg knoflook, curry en tomatenpuree toe.", "Voeg kikkererwten en kokosmelk toe en laat 12 tot 15 minuten koken.", "Roer spinazie erdoor tot die slinkt; voeg water toe als het te dik is.", "Breng op smaak met zout, peper en citroen.", "Serveer met rijst en bewaar restjes voor morgen."],
+        fr: ["Cuis d'abord le riz pour qu'il soit pret avec le curry.", "Fais revenir l'oignon 5 minutes puis ajoute ail, curry et concentre.", "Ajoute pois chiches et lait de coco; mijote 12 a 15 minutes.", "Ajoute les epinards jusqu'a ce qu'ils tombent; ajoute de l'eau si besoin.", "Assaisonne avec sel, poivre et citron.", "Sers avec le riz et garde les restes pour demain."],
+        es: ["Cuece primero el arroz para que este listo con el curry.", "Sofrie cebolla 5 minutos y anade ajo, curry y concentrado.", "Anade garbanzos y leche de coco; cuece 12 a 15 minutos.", "Incorpora espinacas hasta que bajen; anade agua si esta espeso.", "Ajusta sal, pimienta y limon.", "Sirve con arroz y guarda sobras para manana."]
+      },
+      "bean-chilli": {
+        de: ["Zwiebel und Paprika in Oel weich und suess braten.", "Paprika und Kreuzkuemmel 30 Sekunden einruehren.", "Tomaten, abgetropfte Bohnen, Mais und etwas Wasser zugeben.", "20 Minuten koecheln lassen und einige Bohnen zerdruecken.", "Mit Reis, Brot, Kartoffeln oder Salat servieren.", "Reste schnell abkuehlen und fuer Wraps oder Lunch-Bowls nutzen."],
+        nl: ["Bak ui en paprika in olie tot ze zacht zijn.", "Roer paprikapoeder en komijn 30 seconden mee.", "Voeg tomaten, uitgelekte bonen, mais en wat water toe.", "Laat 20 minuten koken en prak wat bonen voor romigheid.", "Serveer met rijst, brood, aardappel of salade.", "Koel restjes snel en gebruik ze voor wraps of lunchkommen."],
+        fr: ["Cuis oignon et poivron dans l'huile jusqu'a ce qu'ils soient doux.", "Ajoute paprika et cumin pendant 30 secondes.", "Ajoute tomates, haricots egouttes, mais et un peu d'eau.", "Mijote 20 minutes et ecrase quelques haricots.", "Sers avec riz, pain, pommes de terre ou salade.", "Refroidis les restes et utilise-les en wraps ou bols."],
+        es: ["Cocina cebolla y pimiento en aceite hasta que esten suaves.", "Anade pimenton y comino durante 30 segundos.", "Anade tomate, alubias escurridas, maiz y un poco de agua.", "Cuece 20 minutos y aplasta algunas alubias.", "Sirve con arroz, pan, patata o ensalada.", "Enfria sobras pronto y usalas en wraps o boles."]
+      }
+    };
+
+    const notesText = {
+      de: "Ein einfaches veganes Essen ist auch eine kleine Gewohnheit der Schadensminderung: guenstig, warm und ohne Tierprodukte.",
+      nl: "Een eenvoudige vegan maaltijd is ook een kleine gewoonte van minder schade: betaalbaar, warm en zonder dierlijke producten.",
+      fr: "Un repas vegetal simple peut etre une petite habitude de reduction du tort: abordable, chaud et sans produits animaux.",
+      es: "Una comida vegana sencilla tambien puede ser un pequeno habito de menor dano: economica, caliente y sin productos animales."
+    };
+
+    const recipeLanguage = document.getElementById("recipeLanguage");
+    const regionSelect = document.getElementById("regionSelect");
+    const styleSelect = document.getElementById("styleSelect");
+    const servingsInput = document.getElementById("servingsInput");
+    const generateButton = document.getElementById("generateRecipeButton");
+    const useLocationButton = document.getElementById("useLocationButton");
+    const locationNote = document.getElementById("locationNote");
+
+    let currentRecipe = recipes[0];
+
+    function t(key) {
+      const lang = recipeLanguage.value;
+      return (ui[lang] && ui[lang][key]) || ui.en[key];
+    }
+
+    function money(value, region) {
+      const cfg = regions[region] || regions.global;
+      return `${cfg.symbol}${value.toFixed(cfg.decimals)}`;
+    }
+
+    function scaledIngredientCost(baseCost, servings, region) {
+      const cfg = regions[region] || regions.global;
+      return baseCost * cfg.factor * (servings / 2);
+    }
+
+    function matchingRecipes() {
+      const style = styleSelect.value;
+      if (style === "any") return recipes;
+      return recipes.filter(recipe => recipe.tags.includes(style));
+    }
+
+    function generateRecipe() {
+      const pool = matchingRecipes();
+      currentRecipe = pool[Math.floor(Math.random() * pool.length)] || recipes[0];
+      renderRecipe();
+    }
+
+    function renderRecipe() {
+      const lang = recipeLanguage.value;
+      const region = regionSelect.value;
+      const servings = Math.max(1, Math.min(8, Number(servingsInput.value) || 2));
+      const total = currentRecipe.ingredients.reduce((sum, item) => sum + scaledIngredientCost(item[1], servings, region), 0);
+
+      document.getElementById("recipePageTitle").textContent = t("title");
+      document.getElementById("recipePageCopy").textContent = t("copy");
+      document.getElementById("recipeMetaKicker").textContent = t("details");
+      document.getElementById("ingredientsTitle").textContent = t("ingredients");
+      document.getElementById("stepsTitle").textContent = t("steps");
+      document.getElementById("notesTitle").textContent = t("notes");
+      generateButton.textContent = t("generate");
+      useLocationButton.textContent = t("locate");
+
+      document.getElementById("recipeTitle").textContent = currentRecipe.title[lang] || currentRecipe.title.en;
+      document.getElementById("recipeSummary").textContent = currentRecipe.summary[lang] || currentRecipe.summary.en;
+      document.getElementById("recipeTime").textContent = currentRecipe.time;
+      document.getElementById("recipeServings").textContent = `${servings} ${t("servings")}`;
+      document.getElementById("recipeProtein").textContent = currentRecipe.protein;
+      document.getElementById("recipeMood").textContent = currentRecipe.mood;
+      document.getElementById("recipeCost").textContent = `${t("total")}: ${money(total, region)} (${money(total / servings, region)} ${t("perServing")})`;
+      document.getElementById("recipeNotes").textContent = currentRecipe.notes;
+
+      const ingredientsList = document.getElementById("ingredientsList");
+      ingredientsList.innerHTML = "";
+      currentRecipe.ingredients.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "ingredient";
+        const cost = scaledIngredientCost(item[1], servings, region);
+        const localizedName = (ingredientNames[lang] && ingredientNames[lang][item[0]]) || item[0];
+        li.innerHTML = `<span><strong>${localizedName}</strong><br>${item[2]}</span><span>${money(cost, region)}</span>`;
+        ingredientsList.appendChild(li);
+      });
+
+      const stepsList = document.getElementById("stepsList");
+      stepsList.innerHTML = "";
+      const localizedSteps = (methodText[currentRecipe.id] && methodText[currentRecipe.id][lang]) || currentRecipe.steps;
+      localizedSteps.forEach(step => {
+        const li = document.createElement("li");
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
+
+      if (lang !== "en") {
+        document.getElementById("recipeNotes").textContent = notesText[lang] || currentRecipe.notes;
+      }
+    }
+
+    function regionFromCoords(latitude, longitude) {
+      if (latitude >= 49 && latitude <= 61 && longitude >= -8.8 && longitude <= 2.2) return "uk";
+      if (latitude >= 24 && latitude <= 50 && longitude >= -125 && longitude <= -66) return "us";
+      if (latitude >= 35 && latitude <= 72 && longitude >= -12 && longitude <= 45) return "eu";
+      if (latitude >= -44 && latitude <= -10 && longitude >= 112 && longitude <= 154) return "au";
+      return "global";
+    }
+
+    generateButton.addEventListener("click", generateRecipe);
+    [recipeLanguage, regionSelect, servingsInput].forEach(control => {
+      control.addEventListener("change", renderRecipe);
+      control.addEventListener("input", renderRecipe);
+    });
+    styleSelect.addEventListener("change", generateRecipe);
+
+    useLocationButton.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        locationNote.textContent = t("locationFailed");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(position => {
+        regionSelect.value = regionFromCoords(position.coords.latitude, position.coords.longitude);
+        locationNote.textContent = t("locationFound");
+        renderRecipe();
+      }, () => {
+        locationNote.textContent = t("locationFailed");
+      }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 86400000 });
+    });
+
+    renderRecipe();
+  </script>
+</body>
+</html>
